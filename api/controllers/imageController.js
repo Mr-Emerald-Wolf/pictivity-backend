@@ -11,7 +11,7 @@ exports.getImage = async (req, res) => {
     catch (err) {
         res.send({
             status: false,
-            message: err
+            message: err 
         })
     }
 };
@@ -37,7 +37,7 @@ exports.createImage = async (req, res) => {
             data: image_url
         })
     } catch (error) {
-        res.status(400).json({
+        res.status(500).json({
             status: false,
             err: error
         })

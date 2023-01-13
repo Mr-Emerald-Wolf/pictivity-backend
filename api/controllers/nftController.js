@@ -1,8 +1,23 @@
+const { History } = require('../models')
 const axios = require('axios');
 require('dotenv').config()
 
+exports.getNft = async (req, res) => {
+    try {
+        const data = await History.findAll();
+        res.status(200).json({
+            data: data
+        })
+    } catch (error) {
+        res.status(500).json({
+            err: error
+        })
+    }
+};
+
 exports.createNft = async (req, res) => {
 
+    const userId = 1;
     const imageURL = req.body.imageURL;
     const wallet = req.body.wallet;
     const options = {
@@ -21,20 +36,44 @@ exports.createNft = async (req, res) => {
             mint_to_address: wallet
         }
     };
-    axios
-        .request(options)
-        .then(function (response) {
+
+    createHistory = async (nft) => {
+        try {
+
+            console.log(nft);
+            const data = await History.create({
+                chain: nft.chain,
+                name: nft.name,
+                thash: nft.transaction_hash,
+                description: nft.description
+            })
             res.status(200).json({
                 status: true,
-                data: response.data
+                api: nft,
+                data: data
             })
-            console.log(response.data);
-        })
-        .catch(function (error) {
-            res.status(400).json({
-                status:false,
+        } catch (error) {
+            res.status(500).json({
+                status: "DB Error",
                 err: error
             })
             console.error(error);
+        }
+    };
+
+
+    axios
+        .request(options)
+        .then(function (response) {
+            console.log(response.data);
+            createHistory(response.data);
+            return response.data
+        })
+        .catch(function (error) {
+            console.error(error);
         });
+
+
+
 };
+
